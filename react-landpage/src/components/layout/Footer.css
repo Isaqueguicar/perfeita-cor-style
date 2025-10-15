@@ -1,0 +1,70 @@
+.footer {
+  background-color: #f0f5f1; /* light-green igual ao HTML original */
+  padding: 2rem 1.5rem; /* py-8 px-6 */
+  border-top: 1px solid #e5e7eb; /* gray-200 */
+}
+
+/* Conteúdo do Footer (links + marca) */
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+/* Layout responsivo para desktop */
+@media (min-width: 768px) {
+  .footer-content {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    align-items: center;
+  }
+}
+
+/* Links do footer */
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .footer-links {
+    flex-direction: row;
+    gap: 1rem; /* equivalente ao mr-4 do HTML original */
+  }
+}
+
+/* Estilo individual dos links */
+.footer-link {
+  color: #555555; /* light-text */
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-link:hover {
+  color: #0a4028; /* primary-green */
+}
+
+/* Nome da marca centralizada */
+.footer-brand h2 {
+  color: #0a4028; /* primary-green */
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700; /* font-bold */
+  margin: 1rem 0; /* my-4 */
+}
+
+/* Bottom do footer (copyright) */
+.footer-bottom {
+  text-align: center;
+  border-top: 1px solid #e5e7eb; /* gray-200 */
+  padding: 1rem 0; /* py-4 */
+}
+
+.footer-bottom p {
+  font-size: 0.875rem; /* text-sm */
+  color: #6b7280; /* gray-500 */
+  margin: 0;
+}

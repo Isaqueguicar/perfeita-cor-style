@@ -1,0 +1,38 @@
+.new-arrivals {
+  background-color: #ffffff; /* white */
+  padding: 5rem 1.5rem; /* py-20 px-6 */
+}
+
+/* Título da seção */
+.section-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem); /* responsivo */
+  font-weight: 700;
+  color: #0a4028; /* primary-green */
+  text-align: center;
+  margin-bottom: 3rem; /* mb-12 equivalente */
+}
+
+/* Grid de produtos */
+.products-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* 1 coluna no mobile */
+  gap: 2rem; /* spacing entre cards */
+}
+
+@media (min-width: 640px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas no tablet */
+  }
+}
+
+@media (min-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr); /* 3 colunas no desktop */
+  }
+}
+
+/* Container para limitar largura */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}

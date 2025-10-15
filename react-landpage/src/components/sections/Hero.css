@@ -1,0 +1,99 @@
+/* =====================
+   Hero Section
+===================== */
+.hero {
+  background-color: #f0f5f1; /* light-green */
+  padding: 5rem 1.5rem; /* py-20 px-6 */
+}
+
+/* Conteúdo do Hero */
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem; /* spacing-xl */
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .hero-content {
+    flex-direction: row;
+    gap: 5rem; /* spacing-2xl equivalente */
+    align-items: center;
+  }
+}
+
+/* Texto do Hero */
+.hero-text {
+  flex: 1;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .hero-text {
+    text-align: left;
+  }
+}
+
+.hero-title {
+  font-size: clamp(2rem, 5vw, 3.5rem); /* responsivo */
+  font-weight: 700;
+  color: #0a4028; /* primary-green */
+  line-height: 1.2;
+  margin-bottom: 1rem; /* spacing-md */
+}
+
+.hero-description {
+  font-size: 1.125rem; /* text-lg */
+  color: #222222; /* dark-text */
+  opacity: 0.8;
+  margin-bottom: 2rem; /* spacing-lg */
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px) {
+  .hero-description {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* Botão do Hero */
+.hero-button {
+  background-color: #0a4028; /* primary-green */
+  color: #ffffff;
+  padding: 0.875rem 2rem; /* py-3 px-8 */
+  font-size: 1rem;
+  font-weight: 700; /* bold */
+  border-radius: 0.5rem; /* radius-lg */
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.hero-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 12px 48px rgba(10, 64, 40, 0.3);
+  background-color: #0c5235; /* primary-green mais claro */
+}
+
+.hero-button:active {
+  transform: translateY(0) scale(1);
+}
+
+/* Imagem do Hero */
+.hero-image {
+  flex: 1;
+  max-width: 600px;
+  width: 100%;
+}
+
+.hero-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem; /* radius-lg */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  object-fit: cover;
+}
