@@ -1,47 +1,40 @@
 import React from 'react';
 import ProductCard from '@components/cards/ProductCard';
-import productDress from '@assets/images/product-dress.jpg';
-import productShirt from '@assets/images/product-shirt.jpg';
-import productRomper from '@assets/images/product-romper.jpg';
 import './NewArrivals.css';
 
-const products = [
-  {
-    id: 1,
-    image: productDress,
-    title: 'Vestido Verão',
-    alt: 'Vestido de verão elegante em tons pastéis'
-  },
-  {
-    id: 2,
-    image: productShirt,
-    title: 'Camisa Linho',
-    alt: 'Camisa de linho em tons neutros'
-  },
-  {
-    id: 3,
-    image: productRomper,
-    title: 'Romper Florido',
-    alt: 'Romper florido delicado'
+const NewArrivals = ({ categories, onProductSelect }) => {
+  // Se não houver categorias ou a lista estiver vazia, não renderiza nada
+  if (!categories || categories.length === 0) {
+    return null;
   }
-];
 
-const NewArrivals = () => {
   return (
     <section id="novidades" className="new-arrivals">
       <div className="container">
-        <h2 className="section-title">Novidades</h2>
-        
-        <div className="products-grid">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              image={product.image}
-              title={product.title}
-              alt={product.alt}
-            />
-          ))}
-        </div>
+        {/* Itera sobre cada categoria recebida do back-end */}
+        {categories.map((category) => (
+          // Renderiza a seção da categoria apenas se ela tiver produtos
+          category.produtos.length > 0 && (
+            <div key={category.id} className="category-section">
+              <h2 className="section-title">{category.nome}</h2>
+              
+              <div className="products-grid">
+                {/* Itera sobre os produtos de cada categoria */}
+                {category.produtos.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    productId={product.id}
+                    onSelect={onProductSelect}
+                    images={product.imagens} 
+                    title={product.nome}
+                    price={product.preco}
+                    alt={`Imagem do produto ${product.nome}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        ))}
       </div>
     </section>
   );

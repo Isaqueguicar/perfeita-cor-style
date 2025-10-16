@@ -1,28 +1,23 @@
-/* =====================
-   Hero Section
-===================== */
 .hero {
-  background-color: #f0f5f1; /* light-green */
-  padding: 5rem 1.5rem; /* py-20 px-6 */
+  background-color: #f0f5f1;
+  padding: 5rem 1.5rem; 
 }
 
-/* Conteúdo do Hero */
 .hero-content {
   display: flex;
   flex-direction: column;
-  gap: 3rem; /* spacing-xl */
+  gap: 3rem; 
   align-items: center;
 }
 
 @media (min-width: 768px) {
   .hero-content {
     flex-direction: row;
-    gap: 5rem; /* spacing-2xl equivalente */
+    gap: 5rem; 
     align-items: center;
   }
 }
 
-/* Texto do Hero */
 .hero-text {
   flex: 1;
   text-align: center;
@@ -35,18 +30,18 @@
 }
 
 .hero-title {
-  font-size: clamp(2rem, 5vw, 3.5rem); /* responsivo */
+  font-size: clamp(2rem, 5vw, 3.5rem); 
   font-weight: 700;
-  color: #0a4028; /* primary-green */
+  color: #0a4028;
   line-height: 1.2;
-  margin-bottom: 1rem; /* spacing-md */
+  margin-bottom: 1rem;
 }
 
 .hero-description {
-  font-size: 1.125rem; /* text-lg */
-  color: #222222; /* dark-text */
+  font-size: 1.125rem;
+  color: #222222; 
   opacity: 0.8;
-  margin-bottom: 2rem; /* spacing-lg */
+  margin-bottom: 2rem;
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
@@ -59,14 +54,13 @@
   }
 }
 
-/* Botão do Hero */
 .hero-button {
-  background-color: #0a4028; /* primary-green */
+  background-color: #0a4028; 
   color: #ffffff;
-  padding: 0.875rem 2rem; /* py-3 px-8 */
+  padding: 0.875rem 2rem;
   font-size: 1rem;
-  font-weight: 700; /* bold */
-  border-radius: 0.5rem; /* radius-lg */
+  font-weight: 700;
+  border-radius: 0.5rem; 
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -76,14 +70,13 @@
 .hero-button:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 12px 48px rgba(10, 64, 40, 0.3);
-  background-color: #0c5235; /* primary-green mais claro */
+  background-color: #0c5235;
 }
 
 .hero-button:active {
   transform: translateY(0) scale(1);
 }
 
-/* Imagem do Hero */
 .hero-image {
   flex: 1;
   max-width: 600px;
@@ -93,7 +86,7 @@
 .hero-image img {
   width: 100%;
   height: auto;
-  border-radius: 0.5rem; /* radius-lg */
+  border-radius: 0.5rem;
   box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   object-fit: cover;
 }

@@ -1,0 +1,129 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: var(--spacing-lg);
+}
+
+@media (min-width: 768px) {
+  .modal-content {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-xl);
+  }
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--color-gray-medium);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.modal-image-section {
+  background-color: var(--color-secondary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+}
+
+.modal-product-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.modal-info-section {
+  padding-top: var(--spacing-md);
+}
+
+.modal-product-title {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  margin-bottom: var(--spacing-xs);
+}
+
+.modal-product-price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary-light);
+  margin-bottom: var(--spacing-md);
+}
+
+.modal-product-description {
+  color: var(--color-gray-medium);
+  margin-bottom: var(--spacing-lg);
+}
+
+.modal-selectors {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.selector-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+}
+
+.selector-group select {
+  padding: 0.5rem;
+  border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-primary);
+}
+
+.color-swatches {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.color-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--color-white);
+  box-shadow: 0 0 0 1px var(--color-gray-light);
+}
+
+.modal-reserve-btn {
+  width: 100%;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 0.875rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: var(--transition-base);
+  cursor: pointer;
+}
+
+.modal-reserve-btn:hover {
+  background-color: var(--color-primary-light);
+}
