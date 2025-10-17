@@ -1,0 +1,106 @@
+.admin-layout {
+  display: flex;
+}
+
+.admin-main-content {
+  margin-left: 250px; 
+  width: calc(100% - 250px);
+  padding: 2rem;
+  background-color: #f7fafc; 
+  min-height: 100vh;
+}
+
+.admin-main-content h1 {
+  color: #0a4028; 
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.admin-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.summary-card {
+  background-color: #ffffff; 
+  padding: 1.5rem;
+  border-radius: 0.5rem; 
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+}
+
+.summary-card h2 {
+  font-size: 0.9rem;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.summary-card p {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0a4028; 
+}
+
+.admin-recent-reservations {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.admin-recent-reservations h2 {
+  font-size: 1.2rem;
+  color: #2d3748; 
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.admin-recent-reservations table {
+  width: 100%;
+  border-collapse: collapse; 
+}
+
+.admin-recent-reservations th,
+.admin-recent-reservations td {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0; 
+}
+
+.admin-recent-reservations th {
+  font-size: 0.8rem;
+  color: #718096; 
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.admin-recent-reservations td {
+  font-size: 0.9rem;
+  color: #4a5568; 
+}
+
+.status {
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.status-aguardando {
+  background-color: #fffaf0; 
+  color: #dd6b20; 
+}
+
+.status-retirado {
+  background-color: #f0fff4;
+  color: #38a169; 
+}
+
+.status-cancelado {
+  background-color: #fff5f5; 
+  color: #e53e3e; 
+}

@@ -72,3 +72,10 @@
   max-width: 1200px;
   margin: 0 auto;
 }
+
+.nav-link-logout {
+  color: #e53e3e;
+}
+.nav-link-logout:hover {
+  color: #c53030;
+}

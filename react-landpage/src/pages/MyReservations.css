@@ -1,0 +1,123 @@
+.reservations-page {
+  padding: var(--spacing-2xl) 0;
+  background-color: var(--color-secondary);
+  min-height: calc(100vh - 150px);
+}
+
+.page-title {
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xl);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.reservations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.reservation-item {
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-md);
+  display: grid;
+  grid-template-columns: auto 1fr auto; 
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .reservation-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .product-image-placeholder {
+    margin: 0 auto var(--spacing-sm); 
+  }
+  .reservation-status-action {
+     margin-top: var(--spacing-sm);
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: var(--spacing-xs);
+  }
+}
+
+.product-image-placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: var(--color-gray-light);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-medium);
+  font-size: 0.8rem;
+}
+
+.reservation-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.product-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-black);
+  margin: 0;
+}
+
+.product-code,
+.reservation-date {
+  font-size: 0.85rem;
+  color: var(--color-gray-medium);
+}
+
+.reservation-status-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.status-badge {
+  padding: 0.2rem 0.8rem;
+  border-radius: 1rem; 
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status-aguardando {
+  background-color: #fffaf0;
+  color: #dd6b20;
+}
+
+.status-retirado {
+  background-color: #f0fff4; 
+  color: #38a169; 
+}
+
+.status-cancelado {
+  background-color: #fff5f5; 
+  color: #e53e3e; 
+}
+
+.cancel-button {
+  background: none;
+  border: none;
+  color: #e53e3e; 
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cancel-button:hover {
+  color: #c53030; 
+}

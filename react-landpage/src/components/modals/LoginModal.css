@@ -1,0 +1,89 @@
+@import './ProductDetailModal.css'; 
+
+.login-modal-content {
+  background-color: var(--color-white);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 90%;
+  max-width: 400px; 
+  text-align: center;
+  position: relative; 
+}
+
+.login-modal-content h1 {
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+  font-size: 1.8rem;
+}
+
+.login-modal-content .form-group {
+  margin-bottom: var(--spacing-md);
+  text-align: left;
+}
+
+.login-modal-content .form-group label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+  color: var(--color-gray-medium);
+  font-size: 0.9rem;
+}
+
+.login-modal-content .form-group input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: var(--font-primary);
+  transition: border-color 0.2s;
+}
+
+.login-modal-content .form-group input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(10, 64, 40, 0.2);
+}
+
+.login-modal-content .error-message {
+  color: #e53e3e;
+  font-size: 0.85rem;
+  margin-top: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+}
+
+.login-modal-content .login-button {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-base);
+  margin-top: var(--spacing-sm);
+}
+
+.login-modal-content .login-button:hover {
+  background-color: var(--color-primary-light);
+}
+
+.login-modal-content .register-link {
+  margin-top: var(--spacing-lg);
+  font-size: 0.9rem;
+  color: var(--color-gray-medium);
+}
+
+.login-modal-content .register-link a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.login-modal-content .register-link a:hover {
+  color: var(--color-primary-light);
+}

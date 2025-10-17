@@ -1,13 +1,13 @@
 import React from 'react';
 import { getImageUrl } from '../../services/api';
 
-// Importações do Swiper para o carrossel de imagens
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, EffectFade, Navigation } from 'swiper/modules';
+
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
-import 'swiper/css/navigation'; // Importa o CSS das setas
+import 'swiper/css/navigation'; 
 
 import './ProductCard.css';
 

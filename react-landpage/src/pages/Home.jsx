@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Header from '@components/layout/Header';
-import Footer from '@components/layout/Footer';
 import Hero from '@components/sections/Hero';
 import NewArrivals from '@components/sections/NewArrivals';
 import FeaturedCategories from '@components/sections/FeaturedCategories';
 import ProductDetailModal from '@components/modals/ProductDetailModal';
 import { fetchCategoriesWithProducts, fetchProductDetails } from '../services/api';
 
-const Home = () => {
+const Home = ({ closeLoginModal }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -16,9 +14,15 @@ const Home = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      const data = await fetchCategoriesWithProducts();
-      setCategories(data);
-      setLoading(false);
+      setLoading(true);
+      try {
+        const data = await fetchCategoriesWithProducts();
+        setCategories(data);
+      } catch (error) {
+        console.error("Falha ao carregar os dados da Home:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     loadData();
   }, []);
@@ -36,22 +40,24 @@ const Home = () => {
     setSelectedProduct(null);
   };
 
-  if (loading) return <div>Carregando...</div>;
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+        <p>Carregando...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="app-wrapper">
-      <Header />
-      <main className="main-content">
-        <Hero />
-        <NewArrivals categories={categories} onProductSelect={handleProductSelect} />
-        <FeaturedCategories categories={categories} />
-      </main>
-      <Footer />
+    <>
+      <Hero />
+      <NewArrivals categories={categories} onProductSelect={handleProductSelect} />
+      <FeaturedCategories categories={categories} />
 
       {isModalOpen && (
         <ProductDetailModal product={selectedProduct} onClose={handleCloseModal} />
       )}
-    </div>
+    </>
   );
 };
 
