@@ -2,8 +2,8 @@ import React from 'react';
 import ProductCard from '@components/cards/ProductCard';
 import './NewArrivals.css';
 
-const NewArrivals = ({ categories, onProductSelect }) => {
-  // Se não houver categorias ou a lista estiver vazia, não renderiza nada
+const NewArrivals = ({ categories, onProductSelect, onOpenFilterModal }) => {
+  
   if (!categories || categories.length === 0) {
     return null;
   }
@@ -11,26 +11,37 @@ const NewArrivals = ({ categories, onProductSelect }) => {
   return (
     <section id="novidades" className="new-arrivals">
       <div className="container">
-        {/* Itera sobre cada categoria recebida do back-end */}
+        
+        <div className="section-header">
+          <h2 className="section-title">Novidades</h2>
+          <button className="filter-button" onClick={onOpenFilterModal}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            Filtrar
+          </button>
+        </div>
+
         {categories.map((category) => (
-          // Renderiza a seção da categoria apenas se ela tiver produtos
           category.produtos.length > 0 && (
             <div key={category.id} className="category-section">
-              <h2 className="section-title">{category.nome}</h2>
+              
+              <h3 className="arrivals-category-title">{category.nome}</h3>
               
               <div className="products-grid">
-                {/* Itera sobre os produtos de cada categoria */}
-                {category.produtos.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    productId={product.id}
-                    onSelect={onProductSelect}
-                    images={product.imagens} 
-                    title={product.nome}
-                    price={product.preco}
-                    alt={`Imagem do produto ${product.nome}`}
-                  />
-                ))}
+                {category.produtos.map((product) => {
+                  const images = (product.imagens ?? []);
+
+                  return (
+                    <ProductCard
+                      key={product.id}
+                      productId={product.id}
+                      onSelect={onProductSelect}
+                      images={images} 
+                      title={product.nome}
+                      price={product.preco}
+                      alt={`Imagem do produto ${product.nome}`}
+                    />
+                  );
+                })}
               </div>
             </div>
           )

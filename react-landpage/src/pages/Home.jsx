@@ -3,6 +3,7 @@ import Hero from '@components/sections/Hero';
 import NewArrivals from '@components/sections/NewArrivals';
 import FeaturedCategories from '@components/sections/FeaturedCategories';
 import ProductDetailModal from '@components/modals/ProductDetailModal';
+import FilterModal from '@components/modals/FilterModal'; 
 import { fetchCategoriesWithProducts, fetchProductDetails } from '../services/api';
 
 const Home = ({ closeLoginModal }) => {
@@ -11,6 +12,10 @@ const Home = ({ closeLoginModal }) => {
   
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const openFilterModal = () => setIsFilterModalOpen(true);
+  const closeFilterModal = () => setIsFilterModalOpen(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -28,6 +33,8 @@ const Home = ({ closeLoginModal }) => {
   }, []);
 
   const handleProductSelect = async (productId) => {
+    if (isFilterModalOpen) closeFilterModal(); 
+
     const productDetails = await fetchProductDetails(productId);
     if (productDetails) {
       setSelectedProduct(productDetails);
@@ -51,11 +58,25 @@ const Home = ({ closeLoginModal }) => {
   return (
     <>
       <Hero />
-      <NewArrivals categories={categories} onProductSelect={handleProductSelect} />
+      
+      <NewArrivals 
+        categories={categories} 
+        onProductSelect={handleProductSelect}
+        onOpenFilterModal={openFilterModal} 
+      />
+      
       <FeaturedCategories categories={categories} />
 
       {isModalOpen && (
         <ProductDetailModal product={selectedProduct} onClose={handleCloseModal} />
+      )}
+
+      {isFilterModalOpen && (
+        <FilterModal 
+          isOpen={isFilterModalOpen} 
+          onClose={closeFilterModal} 
+          onProductSelect={handleProductSelect} 
+        />
       )}
     </>
   );

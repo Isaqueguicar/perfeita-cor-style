@@ -6,38 +6,52 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('authToken'));
   const [userRole, setUserRole] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!token);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); 
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
-    if (token) {
+    const storedToken = localStorage.getItem('authToken');
+    if (storedToken) {
       try {
-        const decodedToken = jwtDecode(token);
+        const decodedToken = jwtDecode(storedToken);
         const roles = decodedToken.authorities || [];
         const isAdmin = roles.includes('ROLE_ADMIN');
+        
         setUserRole(isAdmin ? 'ADMIN' : 'CLIENTE');
         setIsAuthenticated(true);
-        localStorage.setItem('authToken', token); 
+        setToken(storedToken);
       } catch (error) {
-        console.error("Token inválido:", error);
+        console.error("Token inválido ou expirado:", error);
         logout();
       }
-    } else {
-      setUserRole(null);
-      setIsAuthenticated(false);
-      localStorage.removeItem('authToken');
     }
-  }, [token]);
+    setIsLoading(false);
+  }, []);
 
   const login = (newToken) => {
-    setToken(newToken);
+    localStorage.setItem('authToken', newToken);
+    try {
+      const decodedToken = jwtDecode(newToken);
+      const roles = decodedToken.authorities || [];
+      const isAdmin = roles.includes('ROLE_ADMIN');
+
+      setUserRole(isAdmin ? 'ADMIN' : 'CLIENTE');
+      setIsAuthenticated(true);
+      setToken(newToken);
+    } catch (error) {
+      console.error("Erro ao fazer login com novo token:", error);
+    }
   };
 
   const logout = () => {
+    localStorage.removeItem('authToken');
     setToken(null);
+    setUserRole(null);
+    setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ token, isAuthenticated, userRole, login, logout }}>
+    <AuthContext.Provider value={{ token, isAuthenticated, userRole, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

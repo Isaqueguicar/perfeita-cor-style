@@ -1,0 +1,114 @@
+.manage-products-page {
+    position: relative;
+    height: 100%;
+}
+
+.admin-filters-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.admin-filters-bar input,
+.admin-filters-bar select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.admin-products-table {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    overflow-x: auto; 
+}
+
+.admin-products-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-products-table th,
+.admin-products-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap; 
+}
+
+.admin-products-table th {
+    background-color: #f7fafc;
+    font-size: 0.8rem;
+    color: #718096;
+    text-transform: uppercase;
+    position: sticky;
+    top: 0;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-active {
+    background-color: #c6f6d5;
+    color: #22543d;
+}
+
+.status-inactive {
+    background-color: #fed7d7;
+    color: #822727;
+}
+
+.action-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.edit-btn {
+    background-color: #e2e8f0;
+    color: #2d3748;
+}
+
+.edit-btn:hover {
+    background-color: #cbd5e0;
+}
+
+.add-product-fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2.5rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--color-primary, #0a4028);
+    color: white;
+    font-size: 2rem;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.add-product-fab:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
