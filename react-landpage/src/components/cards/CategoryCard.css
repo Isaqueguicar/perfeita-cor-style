@@ -48,9 +48,13 @@
 .category-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #fff;
+  
+  color: #ffffff !important; 
+  
   text-align: left;
   line-height: 1.2;
+  
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 @media (min-width: 768px) {
@@ -58,3 +62,4 @@
     font-size: 1.75rem;
   }
 }
+
