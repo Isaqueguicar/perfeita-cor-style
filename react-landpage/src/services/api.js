@@ -21,13 +21,29 @@ export const fetchCategoriesWithProducts = async () => {
 export const fetchProductDetails = async (productId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/produto/${productId}/detalhar`);
-    if (!response.ok) throw new Error(`Falha ao buscar detalhes do produto ${productId}.`);
-    return await response.json();
+    if (!response.ok) {
+       const errorData = await response.json().catch(() => null);
+       const categoriaId = errorData?.categoriaId || (await fetch(`${API_BASE_URL}/api/produto/${productId}`).then(res => res.ok ? res.json() : {categoriaId: null}).then(d => d.categoriaId));
+       const errorWithMessage = new Error(errorData?.message || `Falha ao buscar detalhes do produto ${productId}.`);
+       errorWithMessage.categoriaId = categoriaId; 
+       throw errorWithMessage;
+    }
+     const productData = await response.json();
+     if (!productData.categoriaId) {
+        try {
+            const baseProduct = await fetch(`${API_BASE_URL}/api/produto/${productId}`).then(res => res.ok ? res.json() : {});
+            productData.categoriaId = baseProduct.categoriaId;
+        } catch(catError){
+            console.warn("Não foi possível obter a categoriaId base do produto:", catError);
+        }
+     }
+     return productData;
   } catch (error) {
     console.error("Erro em fetchProductDetails:", error);
-    return null;
+    return error.categoriaId ? { error: error.message, categoriaId: error.categoriaId } : null;
   }
 };
+
 
 /**
  * (PARA CLIENTE) Busca a lista de categorias ATIVAS formatada para o seletor de filtros.
@@ -48,7 +64,7 @@ export const fetchCategoriesForSelect = async () => {
  */
 export const fetchFilteredProducts = async (filters) => {
   const params = new URLSearchParams();
-  
+
   if (filters.categoriaId) params.append('categoriaId', filters.categoriaId);
   if (filters.tamanho) params.append('tamanho', filters.tamanho);
   if (filters.nome) params.append('nome', filters.nome);
@@ -91,13 +107,13 @@ export const fetchManageCategoriesForSelect = async (token) => {
  */
 export const fetchManageableProducts = async (filters, token) => {
   const params = new URLSearchParams();
-  
+
   if (filters.categoriaId) params.append('categoriaId', filters.categoriaId);
   if (filters.tamanho) params.append('tamanho', filters.tamanho);
   if (filters.nome) params.append('nome', filters.nome);
   if (filters.descricao) params.append('descricao', filters.descricao);
   if (filters.situacao) params.append('situacao', filters.situacao);
-  if (filters.page) params.append('page', filters.page);
+  params.append('page', filters.page || 0); 
   params.append('size', filters.size || 10);
 
   try {
@@ -108,12 +124,20 @@ export const fetchManageableProducts = async (filters, token) => {
        const errorData = await response.json().catch(() => null);
        throw new Error(errorData?.message || `Falha ao buscar produtos para gestão. Status: ${response.status}`);
     }
-    return await response.json();
+    const data = await response.json();
+     return {
+         content: data.content || [],
+         totalPages: data.totalPages || 0,
+         first: data.first === undefined ? true : data.first,
+         last: data.last === undefined ? true : data.last,
+         number: data.number || 0,
+     };
   } catch (error) {
     console.error("Erro em fetchManageableProducts:", error);
     return { content: [], totalPages: 0, first: true, last: true, number: 0 };
   }
 };
+
 
 /**
  * (PARA ADMIN) Envia os dados de um novo produto para o backend.
@@ -134,10 +158,10 @@ export const createProduct = async (productData, token) => {
       const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao cadastrar produto.' }));
       throw new Error(errorData.message || `Falha ao cadastrar produto. Status: ${response.status}`);
     }
-    return true; 
+    return true;
   } catch (error) {
     console.error("Erro em createProduct:", error);
-    throw error; 
+    throw error;
   }
 };
 
@@ -161,10 +185,10 @@ export const updateProduct = async (productId, productData, token) => {
       const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao atualizar produto.' }));
       throw new Error(errorData.message || `Falha ao atualizar produto. Status: ${response.status}`);
     }
-    return true; 
+    return true;
   } catch (error) {
     console.error("Erro em updateProduct:", error);
-    throw error; 
+    throw error;
   }
 };
 
@@ -186,10 +210,10 @@ export const activateProduct = async (productId, token) => {
       const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao ativar produto.' }));
       throw new Error(errorData.message || `Falha ao ativar produto. Status: ${response.status}`);
     }
-    return true; 
+    return true;
   } catch (error) {
     console.error("Erro em activateProduct:", error);
-    throw error; 
+    throw error;
   }
 };
 
@@ -211,13 +235,166 @@ export const deactivateProduct = async (productId, token) => {
       const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao inativar produto.' }));
       throw new Error(errorData.message || `Falha ao inativar produto. Status: ${response.status}`);
     }
-    return true; 
+    return true;
   } catch (error) {
     console.error("Erro em deactivateProduct:", error);
-    throw error; 
+    throw error;
   }
 };
 
+
+/**
+ * (PARA CLIENTE) Cria uma nova reserva para um item de estoque específico.
+ * @param {object} reservationData - { produtoCustomId: number, tamanho: string }
+ * @param {string} token - Token de autenticação do cliente.
+ */
+export const createReservation = async (reservationData, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/reserva`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(reservationData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao criar reserva.' }));
+      throw new Error(errorData.message || `Falha ao criar reserva. Status: ${response.status}`);
+    }
+    return await response.json(); 
+  } catch (error) {
+    console.error("Erro em createReservation:", error);
+    throw error;
+  }
+};
+
+/**
+ * (PARA CLIENTE) Busca a lista de reservas do cliente logado.
+ * @param {string} token - Token de autenticação do cliente.
+ */
+export const fetchMyReservations = async (token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/reserva/minhas-reservas`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Falha ao buscar minhas reservas.');
+    return await response.json();
+  } catch (error) {
+    console.error("Erro em fetchMyReservations:", error);
+    return [];
+  }
+};
+
+/**
+ * (PARA CLIENTE) Cancela uma reserva específica do cliente logado.
+ * @param {number} reservationId - ID da reserva a ser cancelada.
+ * @param {string} token - Token de autenticação do cliente.
+ */
+export const cancelMyReservation = async (reservationId, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/reserva/${reservationId}/cancelar`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao cancelar reserva.' }));
+      throw new Error(errorData.message || `Falha ao cancelar reserva. Status: ${response.status}`);
+    }
+    return await response.json(); 
+  } catch (error) {
+    console.error("Erro em cancelMyReservation:", error);
+    throw error;
+  }
+};
+
+/**
+ * (PARA ADMIN) Busca todas as reservas registradas no sistema.
+ * @param {string} token - Token de autenticação do admin.
+ */
+export const fetchAllReservationsAdmin = async (token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/reserva/admin`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Falha ao buscar todas as reservas para admin.');
+    return await response.json();
+  } catch (error) {
+    console.error("Erro em fetchAllReservationsAdmin:", error);
+    return [];
+  }
+};
+
+/**
+ * (PARA ADMIN) Atualiza o status e/ou observação de uma reserva.
+ * @param {number} reservationId - ID da reserva a ser atualizada.
+ * @param {object} updateData - { status: string, observacaoAdmin?: string }
+ * @param {string} token - Token de autenticação do admin.
+ */
+export const updateReservationAdmin = async (reservationId, updateData, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/reserva/admin/${reservationId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(updateData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao atualizar reserva.' }));
+      throw new Error(errorData.message || `Falha ao atualizar reserva. Status: ${response.status}`);
+    }
+    return await response.json(); 
+  } catch (error) {
+    console.error("Erro em updateReservationAdmin:", error);
+    throw error;
+  }
+};
+
+/**
+ * (PARA CLIENTE) Busca a lista de notificações de reserva pendentes para o cliente logado.
+ * @param {string} token - Token de autenticação do cliente.
+ */
+export const fetchMyPendingNotifications = async (token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/reserva/minhas-notificacoes-pendentes`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Falha ao buscar notificações pendentes.');
+    return await response.json();
+  } catch (error) {
+    console.error("Erro em fetchMyPendingNotifications:", error);
+    return []; 
+  }
+};
+
+/**
+ * (PARA CLIENTE) Marca uma notificação de reserva específica como lida.
+ * @param {number} reservationId - ID da reserva (notificação) a ser marcada como lida.
+ * @param {string} token - Token de autenticação do cliente.
+ */
+export const markNotificationAsRead = async (reservationId, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/reserva/${reservationId}/marcar-vista`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+        if (response.status === 204) return true; 
+        const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao marcar notificação como lida.' }));
+        throw new Error(errorData.message || `Falha ao marcar notificação como lida. Status: ${response.status}`);
+    }
+    return true; 
+  } catch (error) {
+    console.error("Erro em markNotificationAsRead:", error);
+    throw error; 
+  }
+};
 
 /**
  * Constrói a URL completa para uma imagem vinda do back-end.

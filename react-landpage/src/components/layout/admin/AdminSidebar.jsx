@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../auth/AuthContext'; 
+import { useAuth } from '../../auth/AuthContext';
 import './AdminSidebar.css';
 
 const AdminSidebar = () => {
@@ -8,8 +8,12 @@ const AdminSidebar = () => {
   const { logout } = useAuth();
 
   const handleLogout = () => {
-    logout(); 
+    logout();
     navigate('/login'); 
+  };
+
+  const getNavLinkClass = ({ isActive }) => {
+    return isActive ? "nav-item active" : "nav-item";
   };
 
   return (
@@ -18,27 +22,38 @@ const AdminSidebar = () => {
         <h2>Perfeita Cor</h2>
         <span>Admin</span>
       </div>
+
       <nav className="admin-sidebar-nav">
-        <NavLink 
-          to="/admin" 
+        <NavLink
+          to="/admin"
           end 
-          className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
+          className={getNavLinkClass}
         >
           Dashboard
         </NavLink>
-        <NavLink 
-          to="/admin/produtos" 
-          className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
+
+        <NavLink
+          to="/admin/produtos"
+          className={getNavLinkClass} 
         >
           Produtos
         </NavLink>
+
+        <NavLink
+          to="/admin/reservas"
+          className={getNavLinkClass}
+        >
+          Reservas
+        </NavLink>
       </nav>
+
       <div className="admin-sidebar-footer">
-        <button onClick={handleLogout} className="logout-button">Sair</button>
+        <button onClick={handleLogout} className="logout-button">
+          Sair
+        </button>
       </div>
     </aside>
   );
 };
 
 export default AdminSidebar;
-
