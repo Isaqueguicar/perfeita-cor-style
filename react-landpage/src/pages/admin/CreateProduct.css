@@ -416,3 +416,127 @@
     font-size: 0.85rem;
     padding: 0.5rem 0;
 }
+
+ste é o container que está dentro do .form-group.full-width */
+.image-upload-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .image-upload-container {
+    grid-template-columns: 1fr 1fr; 
+  }
+}
+
+.image-upload-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.image-preview.with-suggestions {
+  display: flex;
+  flex-direction: row; 
+  align-items: flex-start; 
+  gap: 1rem;
+  min-width: 0; 
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.image-preview img {
+  width: 80px; 
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.suggested-colors-section {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.75rem;
+  flex-grow: 1; 
+}
+
+.suggested-colors-section label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.suggested-colors-palette {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto; 
+  gap: 0.5rem;
+  padding-bottom: 5px;
+}
+
+.suggested-color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.suggested-color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.suggested-colors-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #64748b;
+  background-color: #f8fafc;
+  border-radius: 6px;
+}
+
+.suggested-colors-loading::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  border-top-color: var(--color-primary, #0a4028);
+  animation: spinner 0.8s linear infinite;
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.image-upload-input input[type="file"] {
+    margin-top: 0;
+}
+
+.image-upload-input small {
+  max-width: 90%;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.image-preview.with-suggestions {
+  grid-column: unset; 
+}

@@ -13,26 +13,24 @@ const CategoryForm = () => {
   const [nome, setNome] = useState('');
   const [imagem, setImagem] = useState(null);
   const [imagemPreview, setImagemPreview] = useState(null);
-  const [existingImagePath, setExistingImagePath] = useState(null); // Guardar path original
+  const [existingImagePath, setExistingImagePath] = useState(null); 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Efeito para buscar dados da categoria se estiver editando
   useEffect(() => {
     if (isEditing && token) {
       setIsLoading(true);
-      console.log(`Buscando detalhes para Categoria ID: ${id}`); // DEBUG
+      console.log(`Buscando detalhes para Categoria ID: ${id}`); 
       fetchCategoryDetails(id, token)
         .then(data => {
-          console.log("Dados recebidos da API:", data); // DEBUG
+          console.log("Dados recebidos da API:", data); 
           setNome(data.nome);
           
-          // O nome do campo no DTO do backend é 'imagemPath'
-          console.log("Path da imagem recebido:", data.imagemPath); // DEBUG
+          console.log("Path da imagem recebido:", data.imagemPath);
           if (data.imagemPath) {
-            setExistingImagePath(data.imagemPath); // Guarda o path original
+            setExistingImagePath(data.imagemPath); 
             const imageUrl = getImageUrl(data.imagemPath);
-            console.log("URL da imagem gerada:", imageUrl); // DEBUG
+            console.log("URL da imagem gerada:", imageUrl); 
             setImagemPreview(imageUrl);
           }
           setIsLoading(false);
@@ -65,7 +63,6 @@ const CategoryForm = () => {
       };
       reader.readAsDataURL(file);
     } else {
-        // Se o usuário cancelar a seleção, reverte para a imagem original (se estiver editando)
         setImagem(null);
         setImagemPreview(existingImagePath ? getImageUrl(existingImagePath) : null);
     }
@@ -85,12 +82,10 @@ const CategoryForm = () => {
     setIsLoading(true);
     setError('');
     
-    // O backend espera um @RequestPart "request" e um @RequestPart "imagem"
-    // O FormData precisa ser construído com essas duas partes.
     const formData = new FormData();
     formData.append('request', new Blob([JSON.stringify({ nome })], { type: 'application/json' }));
     
-    if (imagem) { // Envia a imagem apenas se uma nova foi selecionada
+    if (imagem) {
       formData.append('imagem', imagem);
     }
 

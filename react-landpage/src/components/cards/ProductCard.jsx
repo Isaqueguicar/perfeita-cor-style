@@ -17,7 +17,6 @@ const ProductCard = ({ images, title, alt, price, productId, onSelect }) => {
     onSelect(productId);
   };
 
-  // Formata o preço para o padrão brasileiro (ex: R$ 89,90)
   const formattedPrice = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -26,7 +25,6 @@ const ProductCard = ({ images, title, alt, price, productId, onSelect }) => {
   return (
     <article className="product-card">
       <div className="product-image-wrapper">
-        {/* Se houver mais de uma imagem, cria um carrossel */}
         {images && images.length > 1 ? (
           <Swiper
             modules={[Pagination, Autoplay, EffectFade, Navigation]}
@@ -35,10 +33,10 @@ const ProductCard = ({ images, title, alt, price, productId, onSelect }) => {
             autoplay={{
               delay: 2000,
               disableOnInteraction: false,
-              pauseOnMouseEnter: true, // Pausa o carrossel ao passar o mouse
+              pauseOnMouseEnter: true,
             }}
             effect="fade"
-            navigation={true} // Habilita as setas de navegação
+            navigation={true} 
             className="product-image-carousel"
           >
             {images.map((imagePath, index) => (
@@ -53,7 +51,6 @@ const ProductCard = ({ images, title, alt, price, productId, onSelect }) => {
             ))}
           </Swiper>
         ) : (
-          // Caso contrário, mostra apenas a primeira (ou única) imagem
           <img
             src={getImageUrl(images?.[0])}
             alt={alt}

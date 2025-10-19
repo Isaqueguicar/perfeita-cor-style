@@ -1,22 +1,20 @@
 .product-card {
   background-color: var(--color-white);
-  border-radius: 0.5rem; /* rounded-lg */
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); /* shadow-lg Tailwind */
+  border-radius: 0.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); 
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .product-card:hover {
-  /* Remover transform para igualar HTML original */
-  /* transform: translateY(-4px); */
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); /* opcional leve aumento */
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); 
 }
 
 .product-image-wrapper {
   overflow: hidden;
   width: 100%;
-  height: 16rem; /* h-64 Tailwind ≈ 256px */
+  height: 16rem; 
   background-color: var(--color-gray-light);
 }
 
@@ -28,18 +26,18 @@
 }
 
 .product-card:hover .product-image {
-  opacity: 0.9; /* Igual ao group-hover:opacity-90 do Tailwind */
+  opacity: 0.9; 
 }
 
 .product-info {
-  padding: 1.5rem; /* p-6 Tailwind */
+  padding: 1.5rem; 
 }
 
 .product-title {
-  font-size: 1.25rem; /* text-xl */
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-dark-text);
-  margin-bottom: 1rem; /* mb-4 */
+  margin-bottom: 1rem;
 }
 
 .product-link {
@@ -47,19 +45,15 @@
   color: var(--color-primary);
   font-weight: 600;
   font-size: 1rem;
-  text-decoration: underline; /* hover simples */
+  text-decoration: underline; 
   cursor: pointer;
 }
-
-
-/* --- Adicione estes estilos no final do arquivo --- */
 
 .product-image-carousel {
   width: 100%;
   height: 100%;
 }
 
-/* Garante que o carrossel e os slides preencham o contêiner da imagem */
 .product-image-carousel .swiper,
 .product-image-carousel .swiper-slide {
   width: 100%;

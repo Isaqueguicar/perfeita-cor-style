@@ -141,7 +141,7 @@
   background-color: #fff;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  margin-top: -1px; /* Para colar na tabela */
+  margin-top: -1px; 
 }
 .pagination-controls button {
   padding: 0.5rem 1rem;

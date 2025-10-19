@@ -534,34 +534,24 @@ export const deactivateCategory = async (categoryId, token) => {
   }
 };
 
-// ... (outras funções existentes)
 
-
-// --- FUNÇÃO getImageUrl CORRIGIDA ---
 /**
  * Constrói a URL completa para uma imagem vinda do back-end,
  * diferenciando entre imagens de PRODUTO e CATEGORIA.
  * @param {string} imagePath - O caminho completo do arquivo (ex: "CATEGORIA/2025/10/...")
  */
 export const getImageUrl = (imagePath) => {
-  // Se o caminho for nulo, indefinido ou vazio, retorna um placeholder padrão.
   if (!imagePath) {
     return 'https://placehold.co/400x600/f0f5f1/0a4028?text=Sem+Imagem';
   }
 
-  // Se já for uma URL completa (ex: de um preview local com 'blob:'), retorna como está.
   if (imagePath.startsWith('blob:') || imagePath.startsWith('http')) {
     return imagePath;
   }
 
-  // --- LÓGICA PRINCIPAL DA CORREÇÃO ---
-  // Verifica se o caminho da imagem começa com "CATEGORIA".
-  // Usamos toUpperCase() para garantir a comparação caso haja variação.
   if (imagePath.toUpperCase().startsWith('CATEGORIA')) {
-    // Se for uma categoria, monta a URL para o endpoint de imagem de categoria.
     return `${API_BASE_URL}/api/categoria/imagem/${imagePath}`;
   } else {
-    // Caso contrário, assume que é uma imagem de produto e monta a URL para o endpoint de produto.
     return `${API_BASE_URL}/api/produto/imagem/${imagePath}`;
   }
 };

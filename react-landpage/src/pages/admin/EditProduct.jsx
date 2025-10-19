@@ -428,32 +428,42 @@ const EditProduct = () => {
                     </div>
                 )}
                                 
-                <div className="form-group">
-                  <label>Imagem da Variação</label>
-                  <input type="file" name="imagem" accept="image/png, image/jpeg, image/webp" onChange={(e) => handleImageChange(index, e.target.files[0])} />
-                  {cust.id && !cust.imagem && <small>Deixe em branco para manter a imagem atual.</small>}
-                </div>
-                
-                <div className="image-preview with-suggestions">
-                  {cust.preview && <img src={cust.preview} alt="Pré-visualização" />}
-                  {cust.isAnalyzing && <div className="suggested-colors-loading">A analisar cores...</div>}
-                  {cust.suggestedColors && cust.suggestedColors.length > 0 && (
-                    <div className="suggested-colors-section">
-                      <label>Cores Sugeridas (clique para adicionar)</label>
-                      <div className="suggested-colors-palette">
-                        {cust.suggestedColors.map((color, idx) => (
-                          <div
-                            key={idx}
-                            className="suggested-color-swatch"
-                            style={{ backgroundColor: color }}
-                            title={`Adicionar ${color}`}
-                            onClick={() => addColorToCustomization(index, color)}
-                          />
-                        ))}
-                      </div>
+                {/* Bloco de Upload e Preview de Imagem */}
+                <div className="form-group full-width">
+                  <div className="image-upload-container">
+
+                    {/* Coluna 1: Input */}
+                    <div className="image-upload-input">
+                      <label>Imagem da Variação</label>
+                      <input type="file" name="imagem" accept="image/png, image/jpeg, image/webp" onChange={(e) => handleImageChange(index, e.target.files[0])} />
+                      {cust.id && !cust.imagem && <small>Deixe em branco para manter a imagem atual.</small>}
                     </div>
-                  )}
+
+                    {/* Coluna 2: Preview e Cores Sugeridas */}
+                    <div className="image-preview with-suggestions">
+                      {cust.preview && <img src={cust.preview} alt="Pré-visualização" />}
+                      {cust.isAnalyzing && <div className="suggested-colors-loading">A analisar cores...</div>}
+                      {cust.suggestedColors && cust.suggestedColors.length > 0 && (
+                        <div className="suggested-colors-section">
+                          <label>Cores Sugeridas (clique para adicionar)</label>
+                          <div className="suggested-colors-palette">
+                            {cust.suggestedColors.map((color, idx) => (
+                              <div
+                                key={idx}
+                                className="suggested-color-swatch"
+                                style={{ backgroundColor: color }}
+                                title={`Adicionar ${color}`}
+                                onClick={() => addColorToCustomization(index, color)}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                  </div>
                 </div>
+                {/* Fim do Bloco de Upload e Preview */}
                 
                 <div className="form-group full-width">
                   <label>Cores Selecionadas</label>

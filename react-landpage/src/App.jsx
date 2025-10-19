@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
-// Import Pages
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MyReservations from './pages/MyReservations';
 
-// Import Layouts & Components
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import LoginModal from './components/modals/LoginModal';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminLayout from './components/layout/admin/AdminLayout';
 
-// Import Admin Pages
 import AdminDashboard from './components/layout/admin/AdminDashboard';
 import ManageProducts from './pages/admin/ManageProducts';
 import CreateProduct from './pages/admin/CreateProduct';
@@ -24,7 +21,6 @@ import ManageReservations from './pages/admin/ManageReservations';
 import ManageCategories from './pages/admin/ManageCategories';
 import CategoryForm from './pages/admin/CategoryForm';
 
-// Import Notification Components
 import NotificationModal from './components/modals/NotificationModal';
 import { useAuth } from './components/auth/AuthContext';
 import { fetchMyPendingNotifications } from './services/api';
@@ -38,7 +34,6 @@ const AppContent = () => {
   const isInsideAdmin = location.pathname.startsWith('/admin');
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
-  // --- Notification Logic ---
   const { token, isAuthenticated, userRole } = useAuth();
   const [pendingNotifications, setPendingNotifications] = useState([]);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
@@ -69,7 +64,6 @@ const AppContent = () => {
       setShowNotificationModal(false);
       setPendingNotifications([]);
   };
-  // --- End Notification Logic ---
 
   return (
     <>
