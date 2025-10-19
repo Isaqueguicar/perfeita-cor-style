@@ -15,8 +15,9 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminLayout from './components/layout/admin/AdminLayout';
 import AdminDashboard from './components/layout/admin/AdminDashboard';
 import ManageProducts from './pages/admin/ManageProducts';
-// --- 1. IMPORTAR O NOVO COMPONENTE ---
 import CreateProduct from './pages/admin/CreateProduct';
+import EditProduct from './pages/admin/EditProduct';
+
 
 const AppContent = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -32,21 +33,19 @@ const AppContent = () => {
 
       <main className="main-content"> 
         <Routes>
-          {/* Rotas Públicas */}
           <Route path="/" element={<Home closeLoginModal={closeLoginModal} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/minhas-reservas" element={<ProtectedRoute><MyReservations /></ProtectedRoute>} />
 
-          {/* Rotas Protegidas de Admin */}
           <Route 
             path="/admin" 
             element={<ProtectedRoute requiredRole="ADMIN"><AdminLayout /></ProtectedRoute>}
           >
             <Route index element={<AdminDashboard />} />
             <Route path="produtos" element={<ManageProducts />} />
-            {/* --- 2. ADICIONAR A NOVA ROTA DE CADASTRO --- */}
             <Route path="produtos/novo" element={<CreateProduct />} />
+            <Route path="produtos/editar/:id" element={<EditProduct />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
@@ -69,4 +68,3 @@ const App = () => {
 };
 
 export default App;
-

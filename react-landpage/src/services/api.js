@@ -15,7 +15,8 @@ export const fetchCategoriesWithProducts = async () => {
 };
 
 /**
- * (PARA CLIENTE) Busca os detalhes de um único produto pelo ID.
+ * (PARA CLIENTE E ADMIN) Busca os detalhes de um único produto pelo ID.
+ * Usado na modal de detalhes (cliente) e na página de edição (admin).
  */
 export const fetchProductDetails = async (productId) => {
   try {
@@ -141,12 +142,92 @@ export const createProduct = async (productData, token) => {
 };
 
 /**
+ * (PARA ADMIN) Envia os dados de um produto para atualização.
+ * @param {string|number} productId - O ID do produto a ser atualizado.
+ * @param {FormData} productData - Os dados do produto, incluindo imagens.
+ * @param {string} token - O token de autenticação do admin.
+ */
+export const updateProduct = async (productId, productData, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/produto/${productId}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: productData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao atualizar produto.' }));
+      throw new Error(errorData.message || `Falha ao atualizar produto. Status: ${response.status}`);
+    }
+    return true; 
+  } catch (error) {
+    console.error("Erro em updateProduct:", error);
+    throw error; 
+  }
+};
+
+/**
+ * (PARA ADMIN) Ativa um produto.
+ * @param {string|number} productId - O ID do produto.
+ * @param {string} token - O token de autenticação do admin.
+ */
+export const activateProduct = async (productId, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/produto/${productId}/ativar`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao ativar produto.' }));
+      throw new Error(errorData.message || `Falha ao ativar produto. Status: ${response.status}`);
+    }
+    return true; 
+  } catch (error) {
+    console.error("Erro em activateProduct:", error);
+    throw error; 
+  }
+};
+
+/**
+ * (PARA ADMIN) Inativa um produto.
+ * @param {string|number} productId - O ID do produto.
+ * @param {string} token - O token de autenticação do admin.
+ */
+export const deactivateProduct = async (productId, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/produto/${productId}/inativar`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao inativar produto.' }));
+      throw new Error(errorData.message || `Falha ao inativar produto. Status: ${response.status}`);
+    }
+    return true; 
+  } catch (error) {
+    console.error("Erro em deactivateProduct:", error);
+    throw error; 
+  }
+};
+
+
+/**
  * Constrói a URL completa para uma imagem vinda do back-end.
  */
 export const getImageUrl = (imagePath) => {
   if (!imagePath) {
     return 'https://placehold.co/400x600/f0f5f1/0a4028?text=Imagem...';
   }
+  if (imagePath.startsWith('blob:') || imagePath.startsWith('http')) {
+    return imagePath;
+  }
   return `${API_BASE_URL}/api/produto/imagem/${imagePath}`;
 };
-
