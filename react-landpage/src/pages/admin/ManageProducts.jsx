@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../components/auth/AuthContext';
-import { fetchCategoriesForSelect, fetchManageableProducts } from '../../services/api';
+import { fetchManageCategoriesForSelect, fetchManageableProducts } from '../../services/api';
 import './ManageProducts.css';
 
 const TAMANHOS_DISPONIVEIS = ['P', 'M', 'G', 'GG'];
-const SITUACOES_DISPONIVEIS = ['ATIVO', 'INATIVO']; 
+const SITUACOES_DISPONIVEIS = ['ATIVO', 'INATIVO'];
 
 const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -16,6 +17,7 @@ const useDebounce = (value, delay) => {
 };
 
 const ManageProducts = () => {
+  const navigate = useNavigate();
   const { token } = useAuth();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -33,28 +35,30 @@ const ManageProducts = () => {
     descricao: '',
     categoriaId: '',
     tamanho: '',
-    situacao: '', 
+    situacao: '',
   });
 
   const debouncedNome = useDebounce(filters.nome, 300);
   const debouncedDescricao = useDebounce(filters.descricao, 300);
 
   useEffect(() => {
-    fetchCategoriesForSelect().then(setCategories);
-  }, []);
+    if (token) {
+      fetchManageCategoriesForSelect(token).then(setCategories);
+    }
+  }, [token]);
 
   useEffect(() => {
     if (token) {
       setLoading(true);
-      const currentFilters = { 
+      const currentFilters = {
         categoriaId: filters.categoriaId,
         tamanho: filters.tamanho,
         situacao: filters.situacao,
-        nome: debouncedNome, 
+        nome: debouncedNome,
         descricao: debouncedDescricao,
         page: pageInfo.currentPage,
       };
-      
+
       fetchManageableProducts(currentFilters, token)
         .then(data => {
           setProducts(data.content || []);
@@ -74,7 +78,7 @@ const ManageProducts = () => {
     setPageInfo(prev => ({ ...prev, currentPage: 0 }));
     setFilters(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const handleNextPage = () => {
     if (!pageInfo.isLast) {
       setPageInfo(prev => ({ ...prev, currentPage: prev.currentPage + 1 }));
@@ -93,7 +97,7 @@ const ManageProducts = () => {
 
   return (
     <div className="manage-products-page">
-      <h1>Gerenciar Produtos</h1>
+      <h1>Gerir Produtos</h1>
 
       <div className="admin-filters-bar">
         <input type="text" name="nome" placeholder="Filtrar por nome..." value={filters.nome} onChange={handleFilterChange} />
@@ -126,7 +130,7 @@ const ManageProducts = () => {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="6">Carregando...</td></tr>
+              <tr><td colSpan="6">A carregar...</td></tr>
             ) : products.length > 0 ? (
               products.map(product => (
                 <tr key={product.id}>
@@ -146,22 +150,29 @@ const ManageProducts = () => {
           </tbody>
         </table>
       </div>
-      
+
       <div className="pagination-controls">
         <button onClick={handlePrevPage} disabled={pageInfo.isFirst || loading}>
           Anterior
         </button>
         <span>
-          Página {pageInfo.currentPage + 1} de {pageInfo.totalPages}
+          Página {pageInfo.currentPage + 1} de {pageInfo.totalPages || 1}
         </span>
         <button onClick={handleNextPage} disabled={pageInfo.isLast || loading}>
           Próxima
         </button>
       </div>
-      
-      <button className="add-product-fab" title="Adicionar Novo Produto">+</button>
+
+      <button
+        className="add-product-fab"
+        title="Adicionar Novo Produto"
+        onClick={() => navigate('/admin/produtos/novo')}
+      >
+        +
+      </button>
     </div>
   );
 };
 
 export default ManageProducts;
+
