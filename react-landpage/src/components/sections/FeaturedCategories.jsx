@@ -10,7 +10,7 @@ import 'swiper/css/pagination';
 
 import './FeaturedCategories.css';
 
-const FeaturedCategories = ({ categories }) => {
+const FeaturedCategories = ({ categories, onCategorySelect }) => {
   if (!categories || categories.length === 0) {
     return null;
   }
@@ -24,13 +24,13 @@ const FeaturedCategories = ({ categories }) => {
           modules={[Navigation, Pagination, Autoplay]}
           spaceBetween={30}
           slidesPerView={1}
-          loop={categories.length > 2} 
+          loop={categories.length > 2}
           navigation
           pagination={{ clickable: true }}
           autoplay={{
             delay: 3000,
             disableOnInteraction: false,
-            pauseOnMouseEnter: true, 
+            pauseOnMouseEnter: true,
           }}
           breakpoints={{
             640: {
@@ -46,16 +46,20 @@ const FeaturedCategories = ({ categories }) => {
         >
           {categories.map((category) => {
             let imageUrl = null;
-            if (category.imagePath) {
-              imageUrl = getImageUrl(category.imagePath);
+            if (category.imagemPath) {
+              imageUrl = getImageUrl(category.imagemPath);
+            } else if (category.produtos && category.produtos.length > 0 && category.produtos[0].imagens && category.produtos[0].imagens.length > 0) {
+              imageUrl = getImageUrl(category.produtos[0].imagens[0]);
             }
 
             return imageUrl && (
               <SwiperSlide key={category.id}>
                 <CategoryCard
+                  id={category.id}
                   image={imageUrl}
                   title={category.nome}
                   alt={`Imagem da categoria ${category.nome}`}
+                  onClick={onCategorySelect}
                 />
               </SwiperSlide>
             );

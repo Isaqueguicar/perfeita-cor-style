@@ -1,25 +1,27 @@
 import React from 'react';
 import './CategoryCard.css';
 
-const CategoryCard = ({ image, title, alt }) => {
+const CategoryCard = ({ id, image, title, alt, onClick }) => {
   const handleCategoryClick = () => {
-    console.log(`Categoria selecionada: ${title}`);
+    if (onClick) {
+      onClick(id);
+    }
   };
 
   return (
-    <article 
+    <article
       className="category-card"
       onClick={handleCategoryClick}
     >
       <div className="category-image-wrapper">
-        <img 
-          src={image} 
+        <img
+          src={image}
           alt={alt}
           className="category-image"
           loading="lazy"
         />
       </div>
-      
+
       <div className="category-overlay">
         <h3 className="category-title">{title}</h3>
       </div>

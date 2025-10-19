@@ -3,19 +3,31 @@ import Hero from '@components/sections/Hero';
 import NewArrivals from '@components/sections/NewArrivals';
 import FeaturedCategories from '@components/sections/FeaturedCategories';
 import ProductDetailModal from '@components/modals/ProductDetailModal';
-import FilterModal from '@components/modals/FilterModal'; 
+import FilterModal from '@components/modals/FilterModal';
 import { fetchCategoriesWithProducts, fetchProductDetails } from '../services/api';
 
 const Home = ({ closeLoginModal }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const openFilterModal = () => setIsFilterModalOpen(true);
-  const closeFilterModal = () => setIsFilterModalOpen(false);
+  const [initialFilterCategory, setInitialFilterCategory] = useState('');
+
+  const openFilterModal = (categoryId = '') => {
+    setInitialFilterCategory(categoryId);
+    setIsFilterModalOpen(true);
+  };
+  const closeFilterModal = () => {
+    setIsFilterModalOpen(false);
+    setInitialFilterCategory('');
+  };
+
+  const handleCategorySelect = (categoryId) => {
+    openFilterModal(categoryId);
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -33,7 +45,7 @@ const Home = ({ closeLoginModal }) => {
   }, []);
 
   const handleProductSelect = async (productId) => {
-    if (isFilterModalOpen) closeFilterModal(); 
+    if (isFilterModalOpen) closeFilterModal();
 
     const productDetails = await fetchProductDetails(productId);
     if (productDetails) {
@@ -58,24 +70,28 @@ const Home = ({ closeLoginModal }) => {
   return (
     <>
       <Hero />
-      
-      <NewArrivals 
-        categories={categories} 
+
+      <NewArrivals
+        categories={categories}
         onProductSelect={handleProductSelect}
-        onOpenFilterModal={openFilterModal} 
+        onOpenFilterModal={openFilterModal}
       />
-      
-      <FeaturedCategories categories={categories} />
+
+      <FeaturedCategories
+        categories={categories}
+        onCategorySelect={handleCategorySelect}
+      />
 
       {isModalOpen && (
         <ProductDetailModal product={selectedProduct} onClose={handleCloseModal} />
       )}
 
       {isFilterModalOpen && (
-        <FilterModal 
-          isOpen={isFilterModalOpen} 
-          onClose={closeFilterModal} 
-          onProductSelect={handleProductSelect} 
+        <FilterModal
+          isOpen={isFilterModalOpen}
+          onClose={closeFilterModal}
+          onProductSelect={handleProductSelect}
+          initialCategory={initialFilterCategory}
         />
       )}
     </>

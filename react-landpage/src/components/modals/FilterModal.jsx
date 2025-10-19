@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react'; 
+import React, { useState, useEffect, useCallback } from 'react';
 import ProductCard from '@components/cards/ProductCard';
 import { fetchCategoriesForSelect, fetchFilteredProducts } from '../../services/api';
-import './FilterModal.css'; 
+import './FilterModal.css';
 
 const TAMANHOS_DISPONIVEIS = [
   { value: 'P', label: 'P' },
@@ -27,17 +27,17 @@ const useDebounce = (value, delay) => {
 };
 
 
-const FilterModal = ({ isOpen, onClose, onProductSelect }) => {
+const FilterModal = ({ isOpen, onClose, onProductSelect, initialCategory }) => {
   const [products, setProducts] = useState([]);
   const [availableCategories, setAvailableCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [filterCategoria, setFilterCategoria] = useState('');
+  const [filterCategoria, setFilterCategoria] = useState(initialCategory || '');
   const [filterTamanho, setFilterTamanho] = useState('');
   const [filterNome, setFilterNome] = useState('');
   const [filterDescricao, setFilterDescricao] = useState('');
 
-  const debouncedNome = useDebounce(filterNome, 300); 
+  const debouncedNome = useDebounce(filterNome, 300);
   const debouncedDescricao = useDebounce(filterDescricao, 300);
 
   const handleBackdropClick = (e) => {
@@ -57,6 +57,13 @@ const FilterModal = ({ isOpen, onClose, onProductSelect }) => {
   }, [isOpen, onClose]);
 
   useEffect(() => {
+    if (isOpen && initialCategory) {
+        setFilterCategoria(initialCategory);
+    }
+  }, [isOpen, initialCategory]);
+
+
+  useEffect(() => {
     const loadFilterOptions = async () => {
       const categoriesData = await fetchCategoriesForSelect();
       setAvailableCategories(categoriesData);
@@ -71,7 +78,7 @@ const FilterModal = ({ isOpen, onClose, onProductSelect }) => {
         const filters = {
           categoriaId: filterCategoria,
           tamanho: filterTamanho,
-          nome: debouncedNome, 
+          nome: debouncedNome,
           descricao: debouncedDescricao,
         };
         const productsData = await fetchFilteredProducts(filters);
@@ -83,11 +90,11 @@ const FilterModal = ({ isOpen, onClose, onProductSelect }) => {
         setLoading(false);
       }
     };
-    
-    if (isOpen) { 
+
+    if (isOpen) {
       loadProducts();
     }
-  }, [filterCategoria, filterTamanho, debouncedNome, debouncedDescricao, isOpen]); 
+  }, [filterCategoria, filterTamanho, debouncedNome, debouncedDescricao, isOpen]);
 
   if (!isOpen) {
     return null;
@@ -97,7 +104,7 @@ const FilterModal = ({ isOpen, onClose, onProductSelect }) => {
     <div id="filter-modal-backdrop" className="modal-backdrop" onClick={handleBackdropClick}>
       <div className="filter-modal-content">
         <button className="modal-close-btn" onClick={onClose}>&times;</button>
-        
+
         <div className="filter-modal-header">
           <h2>Filtrar Produtos</h2>
           <div className="filters-bar-modal">
@@ -131,7 +138,7 @@ const FilterModal = ({ isOpen, onClose, onProductSelect }) => {
                 ))}
               </select>
             </div>
-            
+
             <div className="filter-group">
               <label htmlFor="filter-nome">Nome</label>
               <input
@@ -171,7 +178,7 @@ const FilterModal = ({ isOpen, onClose, onProductSelect }) => {
                   <ProductCard
                     key={product.id}
                     productId={product.id}
-                    onSelect={onProductSelect} 
+                    onSelect={onProductSelect}
                     images={images}
                     title={product.nome}
                     price={product.preco}
