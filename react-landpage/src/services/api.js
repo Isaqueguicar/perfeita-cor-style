@@ -394,17 +394,174 @@ export const markNotificationAsRead = async (reservationId, token) => {
     console.error("Erro em markNotificationAsRead:", error);
     throw error; 
   }
+};/**
+ * (PARA ADMIN) Busca a lista paginada e filtrada de TODAS as categorias para a tabela de gestão.
+ * @param {object} filters - Objeto com os filtros (nome, situacao).
+ * @param {number} page - O número da página a ser buscada.
+ * @param {string} token - Token de autenticação do admin.
+ */
+export const fetchManageCategories = async (filters, page, token) => {
+  try {
+    const params = new URLSearchParams();
+    if (filters.nome) params.append('nome', filters.nome);
+    if (filters.situacao) params.append('situacao', filters.situacao);
+    params.append('page', Number.isInteger(page) ? page : 0);
+    params.append('size', 10);
+
+    const response = await fetch(`${API_BASE_URL}/api/categoria/gerenciar?${params.toString()}`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Falha ao buscar categorias para gestão.');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Erro em fetchManageCategories:", error);
+    return { content: [], totalPages: 0, first: true, last: true, number: 0 };
+  }
 };
 
 /**
- * Constrói a URL completa para uma imagem vinda do back-end.
+ * (PARA ADMIN) Busca os detalhes de uma única categoria.
+ * @param {number|string} categoryId - O ID da categoria.
+ * @param {string} token - Token de autenticação do admin.
+ */
+export const fetchCategoryDetails = async (categoryId, token) => {
+    try {
+        // ATENÇÃO: Este endpoint GET /api/categoria/{id} precisa ser criado no backend.
+        // Se o endpoint for /api/categoria/admin/{id}, ajuste a URL abaixo.
+        const response = await fetch(`${API_BASE_URL}/api/categoria/${categoryId}`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Falha ao buscar detalhes da categoria.');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Erro em fetchCategoryDetails:", error);
+        throw error;
+    }
+};
+
+
+/**
+ * (PARA ADMIN) Envia os dados de uma nova categoria para o backend.
+ * @param {FormData} categoryData - Dados da categoria (nome, imagem).
+ * @param {string} token - O token de autenticação do admin.
+ */
+export const createCategory = async (categoryData, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/categoria`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: categoryData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido.' }));
+      throw new Error(errorData.message);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Erro em createCategory:", error);
+    throw error;
+  }
+};
+
+/**
+ * (PARA ADMIN) Envia os dados de uma categoria para atualização.
+ * @param {number|string} categoryId - O ID da categoria.
+ * @param {FormData} categoryData - Dados da categoria.
+ * @param {string} token - O token de autenticação do admin.
+ */
+export const updateCategory = async (categoryId, categoryData, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/categoria/${categoryId}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: categoryData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido.' }));
+      throw new Error(errorData.message);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Erro em updateCategory:", error);
+    throw error;
+  }
+};
+
+/**
+ * (PARA ADMIN) Ativa uma categoria.
+ * @param {number|string} categoryId - O ID da categoria.
+ * @param {string} token - O token de autenticação do admin.
+ */
+export const activateCategory = async (categoryId, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/categoria/${categoryId}/ativar`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (response.status !== 204) throw new Error('Falha ao ativar categoria.');
+    return true;
+  } catch (error) {
+    console.error("Erro em activateCategory:", error);
+    throw error;
+  }
+};
+
+/**
+ * (PARA ADMIN) Inativa uma categoria.
+ * @param {number|string} categoryId - O ID da categoria.
+ * @param {string} token - O token de autenticação do admin.
+ */
+export const deactivateCategory = async (categoryId, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/categoria/${categoryId}/inativar`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (response.status !== 204) throw new Error('Falha ao inativar categoria.');
+    return true;
+  } catch (error) {
+    console.error("Erro em deactivateCategory:", error);
+    throw error;
+  }
+};
+
+// ... (outras funções existentes)
+
+
+// --- FUNÇÃO getImageUrl CORRIGIDA ---
+/**
+ * Constrói a URL completa para uma imagem vinda do back-end,
+ * diferenciando entre imagens de PRODUTO e CATEGORIA.
+ * @param {string} imagePath - O caminho completo do arquivo (ex: "CATEGORIA/2025/10/...")
  */
 export const getImageUrl = (imagePath) => {
+  // Se o caminho for nulo, indefinido ou vazio, retorna um placeholder padrão.
   if (!imagePath) {
-    return 'https://placehold.co/400x600/f0f5f1/0a4028?text=Imagem...';
+    return 'https://placehold.co/400x600/f0f5f1/0a4028?text=Sem+Imagem';
   }
+
+  // Se já for uma URL completa (ex: de um preview local com 'blob:'), retorna como está.
   if (imagePath.startsWith('blob:') || imagePath.startsWith('http')) {
     return imagePath;
   }
-  return `${API_BASE_URL}/api/produto/imagem/${imagePath}`;
+
+  // --- LÓGICA PRINCIPAL DA CORREÇÃO ---
+  // Verifica se o caminho da imagem começa com "CATEGORIA".
+  // Usamos toUpperCase() para garantir a comparação caso haja variação.
+  if (imagePath.toUpperCase().startsWith('CATEGORIA')) {
+    // Se for uma categoria, monta a URL para o endpoint de imagem de categoria.
+    return `${API_BASE_URL}/api/categoria/imagem/${imagePath}`;
+  } else {
+    // Caso contrário, assume que é uma imagem de produto e monta a URL para o endpoint de produto.
+    return `${API_BASE_URL}/api/produto/imagem/${imagePath}`;
+  }
 };

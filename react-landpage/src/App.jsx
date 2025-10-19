@@ -1,27 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
+// Import Pages
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MyReservations from './pages/MyReservations';
 
+// Import Layouts & Components
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import LoginModal from './components/modals/LoginModal';
-import ProtectedRoute from './components/auth/ProtectedRoute'; 
-import AdminLayout from './components/layout/admin/AdminLayout'; 
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import AdminLayout from './components/layout/admin/AdminLayout';
 
-import AdminDashboard from './components/layout/admin/AdminDashboard'; 
+// Import Admin Pages
+import AdminDashboard from './components/layout/admin/AdminDashboard';
 import ManageProducts from './pages/admin/ManageProducts';
 import CreateProduct from './pages/admin/CreateProduct';
 import EditProduct from './pages/admin/EditProduct';
-import ManageReservations from './pages/admin/ManageReservations'; 
+import ManageReservations from './pages/admin/ManageReservations';
+import ManageCategories from './pages/admin/ManageCategories';
+import CategoryForm from './pages/admin/CategoryForm';
 
-import NotificationModal from './components/modals/NotificationModal'; 
-import { useAuth } from './components/auth/AuthContext'; 
-import { fetchMyPendingNotifications } from './services/api'; 
+// Import Notification Components
+import NotificationModal from './components/modals/NotificationModal';
+import { useAuth } from './components/auth/AuthContext';
+import { fetchMyPendingNotifications } from './services/api';
 
 const AppContent = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -32,7 +38,8 @@ const AppContent = () => {
   const isInsideAdmin = location.pathname.startsWith('/admin');
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
-  const { token, isAuthenticated, userRole } = useAuth(); 
+  // --- Notification Logic ---
+  const { token, isAuthenticated, userRole } = useAuth();
   const [pendingNotifications, setPendingNotifications] = useState([]);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
 
@@ -43,63 +50,51 @@ const AppContent = () => {
           const notifications = await fetchMyPendingNotifications(token);
           if (notifications && notifications.length > 0) {
             setPendingNotifications(notifications);
-            setShowNotificationModal(true); 
+            setShowNotificationModal(true);
           } else {
-            setPendingNotifications([]); 
-            setShowNotificationModal(false); 
+            setPendingNotifications([]);
           }
         } catch (error) {
           console.error("Erro ao verificar notificações:", error);
-          setShowNotificationModal(false);
         }
       } else {
          setPendingNotifications([]);
          setShowNotificationModal(false);
       }
     };
-
-    checkForNotifications(); 
-
+    checkForNotifications();
   }, [isAuthenticated, token, userRole]);
 
   const handleCloseNotificationModal = () => {
       setShowNotificationModal(false);
       setPendingNotifications([]);
   };
+  // --- End Notification Logic ---
 
   return (
     <>
       {!isInsideAdmin && !isAuthPage && <Header onLoginClick={openLoginModal} />}
 
-      <main className="main-content"> 
+      <main className="main-content">
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Home closeLoginModal={closeLoginModal} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          <Route
-            path="/minhas-reservas"
-            element={
-              <ProtectedRoute> 
-                <MyReservations />
-              </ProtectedRoute>
-            }
-          />
+          {/* Client Protected Route */}
+          <Route path="/minhas-reservas" element={<ProtectedRoute><MyReservations /></ProtectedRoute>} />
 
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute requiredRole="ADMIN">
-                <AdminLayout /> 
-              </ProtectedRoute>
-            }
-          >
+          {/* Admin Protected Routes */}
+          <Route path="/admin" element={<ProtectedRoute requiredRole="ADMIN"><AdminLayout /></ProtectedRoute>}>
             <Route index element={<AdminDashboard />} />
             <Route path="produtos" element={<ManageProducts />} />
             <Route path="produtos/novo" element={<CreateProduct />} />
             <Route path="produtos/editar/:id" element={<EditProduct />} />
+            <Route path="categorias" element={<ManageCategories />} />
+            <Route path="categorias/nova" element={<CategoryForm />} />
+            <Route path="categorias/editar/:id" element={<CategoryForm />} />
             <Route path="reservas" element={<ManageReservations />} />
-
           </Route>
 
           <Route path="*" element={<NotFound />} />
@@ -109,23 +104,20 @@ const AppContent = () => {
       {!isInsideAdmin && !isAuthPage && <Footer />}
 
       <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
-
       {showNotificationModal && (
-          <NotificationModal
-             notifications={pendingNotifications}
-             onClose={handleCloseNotificationModal} 
-           />
-       )}
+        <NotificationModal
+          notifications={pendingNotifications}
+          onClose={handleCloseNotificationModal}
+        />
+      )}
     </>
   );
 };
 
-const App = () => {
-  return (
-    <BrowserRouter>
-      <AppContent /> 
-    </BrowserRouter>
-  );
-};
+const App = () => (
+  <BrowserRouter>
+    <AppContent />
+  </BrowserRouter>
+);
 
 export default App;
