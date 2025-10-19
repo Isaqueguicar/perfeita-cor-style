@@ -489,7 +489,12 @@ export const updateCategory = async (categoryId, categoryData, token) => {
       const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido.' }));
       throw new Error(errorData.message);
     }
+    
+    if (response.status === 204) {
+        return true; 
+    }
     return await response.json();
+
   } catch (error) {
     console.error("Erro em updateCategory:", error);
     throw error;
