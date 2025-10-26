@@ -1,3 +1,36 @@
+/**
+ * (PARA CLIENTE) Busca produtos filtrados com base nos parâmetros.
+ */
+export const fetchFilteredProducts = async (filters) => {
+  const params = new URLSearchParams();
+
+  if (filters.categoriaId && filters.categoriaId !== '') {
+       console.log(`Adicionando categoriaId='${filters.categoriaId}' aos parâmetros da URL`);
+       params.append('categoriaId', filters.categoriaId);
+  }
+  if (filters.tamanho) params.append('tamanho', filters.tamanho);
+  if (filters.nome) params.append('nome', filters.nome);
+  if (filters.descricao) params.append('descricao', filters.descricao);
+  if (filters.page) params.append('page', filters.page);
+  params.append('size', filters.size || 10); 
+
+  const url = `${API_BASE_URL}/api/produto?${params.toString()}`;
+  console.log("URL da API de filtro:", url); 
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+       const errorData = await response.json().catch(() => null);
+       console.error("Erro na API de filtro:", response.status, errorData);
+       throw new Error(errorData?.message || `Falha ao buscar produtos filtrados. Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.content || [];
+  } catch (error) {
+    console.error("Erro em fetchFilteredProducts:", error);
+    throw error;
+  }
+};
+
 const API_BASE_URL = 'http://localhost:8080';
 
 /**
@@ -23,16 +56,29 @@ export const fetchProductDetails = async (productId) => {
     const response = await fetch(`${API_BASE_URL}/api/produto/${productId}/detalhar`);
     if (!response.ok) {
        const errorData = await response.json().catch(() => null);
-       const categoriaId = errorData?.categoriaId || (await fetch(`${API_BASE_URL}/api/produto/${productId}`).then(res => res.ok ? res.json() : {categoriaId: null}).then(d => d.categoriaId));
+       let categoriaId = errorData?.categoriaId;
+       if (!categoriaId) {
+         try {
+            const baseProductRes = await fetch(`${API_BASE_URL}/api/produto/${productId}`);
+            if (baseProductRes.ok) {
+                const baseProduct = await baseProductRes.json();
+                categoriaId = baseProduct.categoriaId;
+            }
+         } catch (baseError) {
+            console.warn("Não foi possível obter a categoria base do produto:", baseError);
+         }
+       }
        const errorWithMessage = new Error(errorData?.message || `Falha ao buscar detalhes do produto ${productId}.`);
        errorWithMessage.categoriaId = categoriaId; 
-       throw errorWithMessage;
     }
      const productData = await response.json();
      if (!productData.categoriaId) {
         try {
-            const baseProduct = await fetch(`${API_BASE_URL}/api/produto/${productId}`).then(res => res.ok ? res.json() : {});
-            productData.categoriaId = baseProduct.categoriaId;
+            const baseProductRes = await fetch(`${API_BASE_URL}/api/produto/${productId}`);
+            if (baseProductRes.ok) {
+                const baseProduct = await baseProductRes.json();
+                productData.categoriaId = baseProduct.categoriaId;
+            }
         } catch(catError){
             console.warn("Não foi possível obter a categoriaId base do produto:", catError);
         }
@@ -40,7 +86,8 @@ export const fetchProductDetails = async (productId) => {
      return productData;
   } catch (error) {
     console.error("Erro em fetchProductDetails:", error);
-    return error.categoriaId ? { error: error.message, categoriaId: error.categoriaId } : null;
+    // Retorna um objeto com a mensagem de erro e a categoriaId, se disponível
+    return { error: error.message, categoriaId: error.categoriaId || null };
   }
 };
 
@@ -55,33 +102,6 @@ export const fetchCategoriesForSelect = async () => {
     return await response.json();
   } catch (error) {
     console.error("Erro em fetchCategoriesForSelect:", error);
-    return [];
-  }
-};
-
-/**
- * (PARA CLIENTE) Busca produtos filtrados com base nos parâmetros.
- */
-export const fetchFilteredProducts = async (filters) => {
-  const params = new URLSearchParams();
-
-  if (filters.categoriaId) params.append('categoriaId', filters.categoriaId);
-  if (filters.tamanho) params.append('tamanho', filters.tamanho);
-  if (filters.nome) params.append('nome', filters.nome);
-  if (filters.descricao) params.append('descricao', filters.descricao);
-  if (filters.page) params.append('page', filters.page);
-  params.append('size', filters.size || 10);
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/produto?${params.toString()}`);
-    if (!response.ok) {
-       const errorData = await response.json().catch(() => null);
-       throw new Error(errorData?.message || `Falha ao buscar produtos filtrados. Status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data.content || [];
-  } catch (error) {
-    console.error("Erro em fetchFilteredProducts:", error);
     return [];
   }
 };
@@ -113,7 +133,7 @@ export const fetchManageableProducts = async (filters, token) => {
   if (filters.nome) params.append('nome', filters.nome);
   if (filters.descricao) params.append('descricao', filters.descricao);
   if (filters.situacao) params.append('situacao', filters.situacao);
-  params.append('page', filters.page || 0); 
+  params.append('page', filters.page || 0);
   params.append('size', filters.size || 10);
 
   try {
@@ -263,7 +283,7 @@ export const createReservation = async (reservationData, token) => {
       const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao criar reserva.' }));
       throw new Error(errorData.message || `Falha ao criar reserva. Status: ${response.status}`);
     }
-    return await response.json(); 
+    return await response.json();
   } catch (error) {
     console.error("Erro em createReservation:", error);
     throw error;
@@ -303,7 +323,7 @@ export const cancelMyReservation = async (reservationId, token) => {
       const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao cancelar reserva.' }));
       throw new Error(errorData.message || `Falha ao cancelar reserva. Status: ${response.status}`);
     }
-    return await response.json(); 
+    return await response.json();
   } catch (error) {
     console.error("Erro em cancelMyReservation:", error);
     throw error;
@@ -348,7 +368,7 @@ export const updateReservationAdmin = async (reservationId, updateData, token) =
       const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao atualizar reserva.' }));
       throw new Error(errorData.message || `Falha ao atualizar reserva. Status: ${response.status}`);
     }
-    return await response.json(); 
+    return await response.json();
   } catch (error) {
     console.error("Erro em updateReservationAdmin:", error);
     throw error;
@@ -368,7 +388,7 @@ export const fetchMyPendingNotifications = async (token) => {
     return await response.json();
   } catch (error) {
     console.error("Erro em fetchMyPendingNotifications:", error);
-    return []; 
+    return [];
   }
 };
 
@@ -385,7 +405,7 @@ export const markNotificationAsRead = async (reservationId, token) => {
     });
 
     if (!response.ok) {
-        if (response.status === 204) return true; 
+        if (response.status === 204) return true;
         const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido ao marcar notificação como lida.' }));
         throw new Error(errorData.message || `Falha ao marcar notificação como lida. Status: ${response.status}`);
     }
@@ -406,7 +426,7 @@ export const fetchManageCategories = async (filters, page, token) => {
     if (filters.nome) params.append('nome', filters.nome);
     if (filters.situacao) params.append('situacao', filters.situacao);
     params.append('page', Number.isInteger(page) ? page : 0);
-    params.append('size', 10);
+    params.append('size', 10); 
 
     const response = await fetch(`${API_BASE_URL}/api/categoria/gerenciar?${params.toString()}`, {
       headers: { 'Authorization': `Bearer ${token}` },
@@ -416,7 +436,7 @@ export const fetchManageCategories = async (filters, page, token) => {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || 'Falha ao buscar categorias para gestão.');
     }
-    return await response.json();
+    return await response.json(); 
   } catch (error) {
     console.error("Erro em fetchManageCategories:", error);
     return { content: [], totalPages: 0, first: true, last: true, number: 0 };
@@ -430,8 +450,6 @@ export const fetchManageCategories = async (filters, page, token) => {
  */
 export const fetchCategoryDetails = async (categoryId, token) => {
     try {
-        // ATENÇÃO: Este endpoint GET /api/categoria/{id} precisa ser criado no backend.
-        // Se o endpoint for /api/categoria/admin/{id}, ajuste a URL abaixo.
         const response = await fetch(`${API_BASE_URL}/api/categoria/${categoryId}`, {
             headers: { 'Authorization': `Bearer ${token}` },
         });
@@ -442,7 +460,7 @@ export const fetchCategoryDetails = async (categoryId, token) => {
         return await response.json();
     } catch (error) {
         console.error("Erro em fetchCategoryDetails:", error);
-        throw error;
+        throw error; 
     }
 };
 
@@ -462,7 +480,7 @@ export const createCategory = async (categoryData, token) => {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido.' }));
-      throw new Error(errorData.message);
+      throw new Error(errorData.message || `Falha ao criar categoria. Status: ${response.status}`);
     }
     return await response.json();
   } catch (error) {
@@ -487,11 +505,11 @@ export const updateCategory = async (categoryId, categoryData, token) => {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido.' }));
-      throw new Error(errorData.message);
+      throw new Error(errorData.message || `Falha ao atualizar categoria. Status: ${response.status}`);
     }
-    
+
     if (response.status === 204) {
-        return true; 
+        return true;
     }
     return await response.json();
 
@@ -512,7 +530,10 @@ export const activateCategory = async (categoryId, token) => {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}` },
     });
-    if (response.status !== 204) throw new Error('Falha ao ativar categoria.');
+    if (response.status !== 204) {
+       const errorData = await response.json().catch(() => ({}));
+       throw new Error(errorData.message || `Falha ao ativar categoria. Status: ${response.status}`);
+    }
     return true;
   } catch (error) {
     console.error("Erro em activateCategory:", error);
@@ -531,7 +552,10 @@ export const deactivateCategory = async (categoryId, token) => {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}` },
     });
-    if (response.status !== 204) throw new Error('Falha ao inativar categoria.');
+    if (response.status !== 204) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Falha ao inativar categoria. Status: ${response.status}`);
+    }
     return true;
   } catch (error) {
     console.error("Erro em deactivateCategory:", error);

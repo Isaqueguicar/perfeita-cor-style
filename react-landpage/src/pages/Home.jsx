@@ -14,19 +14,22 @@ const Home = ({ closeLoginModal }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [initialFilterCategory, setInitialFilterCategory] = useState('');
-
+  const [initialFilterCategory, setInitialFilterCategory] = useState(''); 
+  
   const openFilterModal = (categoryId = '') => {
+    console.log("Abrindo filtro com categoria inicial:", categoryId); 
     setInitialFilterCategory(categoryId);
     setIsFilterModalOpen(true);
   };
+
   const closeFilterModal = () => {
     setIsFilterModalOpen(false);
-    setInitialFilterCategory('');
+    setInitialFilterCategory(''); 
   };
 
   const handleCategorySelect = (categoryId) => {
-    openFilterModal(categoryId);
+    console.log("Categoria selecionada em FeaturedCategories:", categoryId); 
+    openFilterModal(categoryId); 
   };
 
   useEffect(() => {
@@ -45,12 +48,23 @@ const Home = ({ closeLoginModal }) => {
   }, []);
 
   const handleProductSelect = async (productId) => {
-    if (isFilterModalOpen) closeFilterModal();
+    if (isFilterModalOpen) closeFilterModal(); 
 
-    const productDetails = await fetchProductDetails(productId);
-    if (productDetails) {
-      setSelectedProduct(productDetails);
-      setIsModalOpen(true);
+    try {
+      const productDetails = await fetchProductDetails(productId);
+      if (productDetails && !productDetails.error) { 
+        setSelectedProduct(productDetails);
+        setIsModalOpen(true);
+      } else if (productDetails && productDetails.error) {
+         console.error("Erro ao buscar detalhes do produto:", productDetails.error);
+         alert(`Não foi possível carregar os detalhes do produto: ${productDetails.error}`);
+      } else {
+         console.error("Produto não encontrado ou falha na API.");
+         alert("Produto não encontrado ou falha ao buscar detalhes.");
+      }
+    } catch (apiError) {
+       console.error("Erro na chamada da API fetchProductDetails:", apiError);
+       alert("Ocorreu um erro ao buscar os detalhes do produto.");
     }
   };
 
@@ -79,10 +93,10 @@ const Home = ({ closeLoginModal }) => {
 
       <FeaturedCategories
         categories={categories}
-        onCategorySelect={handleCategorySelect}
+        onCategorySelect={handleCategorySelect} 
       />
 
-      {isModalOpen && (
+      {isModalOpen && selectedProduct && (
         <ProductDetailModal product={selectedProduct} onClose={handleCloseModal} />
       )}
 
@@ -91,7 +105,7 @@ const Home = ({ closeLoginModal }) => {
           isOpen={isFilterModalOpen}
           onClose={closeFilterModal}
           onProductSelect={handleProductSelect}
-          initialCategory={initialFilterCategory}
+          initialCategory={initialFilterCategory} 
         />
       )}
     </>

@@ -32,7 +32,11 @@ const FilterModal = ({ isOpen, onClose, onProductSelect, initialCategory }) => {
   const [availableCategories, setAvailableCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [filterCategoria, setFilterCategoria] = useState(initialCategory || '');
+  const initialCategoryValue = (initialCategory && typeof initialCategory === 'object')
+    ? ''
+    : (initialCategory || '');
+  const [filterCategoria, setFilterCategoria] = useState(initialCategoryValue);
+
   const [filterTamanho, setFilterTamanho] = useState('');
   const [filterNome, setFilterNome] = useState('');
   const [filterDescricao, setFilterDescricao] = useState('');
@@ -57,16 +61,24 @@ const FilterModal = ({ isOpen, onClose, onProductSelect, initialCategory }) => {
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (isOpen && initialCategory) {
-        setFilterCategoria(initialCategory);
+    if (isOpen) {
+        const safeInitialCategory = (initialCategory && typeof initialCategory === 'object') ? '' : (initialCategory || '');
+        setFilterCategoria(safeInitialCategory);
+        console.log("Initial category received:", initialCategory, "Setting filter to:", safeInitialCategory);
     }
   }, [isOpen, initialCategory]);
 
 
   useEffect(() => {
     const loadFilterOptions = async () => {
-      const categoriesData = await fetchCategoriesForSelect();
-      setAvailableCategories(categoriesData);
+      try {
+        const categoriesData = await fetchCategoriesForSelect();
+        setAvailableCategories(categoriesData);
+        console.log("Categorias disponíveis carregadas:", categoriesData);
+      } catch (error) {
+        console.error("Erro ao carregar categorias para filtro:", error);
+        setAvailableCategories([]);
+      }
     };
     loadFilterOptions();
   }, []);
@@ -81,11 +93,17 @@ const FilterModal = ({ isOpen, onClose, onProductSelect, initialCategory }) => {
           nome: debouncedNome,
           descricao: debouncedDescricao,
         };
+
+        if (typeof filters.categoriaId === 'object') {
+          console.error("ERRO: filterCategoria é um objeto!", filters.categoriaId);
+          filters.categoriaId = '';
+        }
+
         const productsData = await fetchFilteredProducts(filters);
         setProducts(productsData);
       } catch (error) {
-        console.error("Erro ao buscar produtos:", error);
-        setProducts([]);
+        console.error("Erro ao buscar produtos filtrados:", error);
+        setProducts([]); 
       } finally {
         setLoading(false);
       }
@@ -94,7 +112,7 @@ const FilterModal = ({ isOpen, onClose, onProductSelect, initialCategory }) => {
     if (isOpen) {
       loadProducts();
     }
-  }, [filterCategoria, filterTamanho, debouncedNome, debouncedDescricao, isOpen]);
+  }, [filterCategoria, filterTamanho, debouncedNome, debouncedDescricao, isOpen]); 
 
   if (!isOpen) {
     return null;
