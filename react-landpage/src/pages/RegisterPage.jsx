@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import InputMask from 'react-input-mask';
 import './RegisterPage.css'; 
 
 const RegisterPage = () => {
@@ -27,6 +28,13 @@ const RegisterPage = () => {
       return;
     }
 
+    const telefoneApenasNumeros = telefone.replace(/\D/g, '');
+
+    if (telefoneApenasNumeros.length < 10) { 
+      setError('Por favor, insira um telefone válido com DDD.');
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:8080/api/auth/register/cliente', {
         method: 'POST',
@@ -34,7 +42,7 @@ const RegisterPage = () => {
         body: JSON.stringify({
           nome,
           email,
-          telefone,
+          telefone: telefoneApenasNumeros,
           temWhatsapp,
           senha,
         }),
@@ -92,14 +100,21 @@ const RegisterPage = () => {
           </div>
           <div className="form-group">
             <label htmlFor="telefone">Telefone</label>
-            <input
-              type="tel"
-              id="telefone"
+            <InputMask
+              mask="(99) 99999-9999"
               value={telefone}
               onChange={(e) => setTelefone(e.target.value)}
-              required
-              placeholder="(00) 90000-0000"
-            />
+            >
+              {(inputProps) => (
+                <input
+                  {...inputProps}
+                  type="tel"
+                  id="telefone"
+                  required
+                  placeholder="(00) 90000-0000"
+                />
+              )}
+            </InputMask>
           </div>
           <div className="form-group checkbox-group">
             <input
